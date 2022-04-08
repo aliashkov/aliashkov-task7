@@ -7,7 +7,7 @@ class userService {
     }
 
     getById = (key) => {
-        return this.users.filter(user => key == user.id);
+        return this.users.filter(user => key === user.id);
     }
 
     deleteById = (key) => {
@@ -26,7 +26,7 @@ class userService {
 
     update = (data, key) => {
         this.users = this.users.filter(user => {
-            if (key == user.id) {
+            if (key === user.id) {
                 user.name = data;
             }
             return user;

@@ -1,6 +1,8 @@
+let usersData = require("../data");
+
 class userService {
 
-    users = [{ name: "Artyom", id: "1" }, { name: "Alexander", id: "2" }]
+    users = usersData;
 
     getAll = () => {
         return this.users;

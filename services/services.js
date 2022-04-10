@@ -22,7 +22,7 @@ class userService {
         this.users.forEach(elem => {
             uid = Math.max(elem.id);
         })
-        this.users.push({ name: data, id: String(++uid) });
+        this.users.push({ name: data, id: ++uid });
         return this.users;
     }
 

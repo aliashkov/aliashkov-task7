@@ -3,11 +3,11 @@ const User = require('../models/model')
 class UserService {
 
     getUsers() {
-        return User.findAll()
+        return User.findAll({ attributes: ['id', 'name' , 'password'] })
     }
 
     getUserById(id) {
-        return User.findOne({ where: { id } })
+        return User.findOne({ attributes: ['id', 'name' , 'password'] },{ where: { id } })
     }
 
     addUser(newUser) {

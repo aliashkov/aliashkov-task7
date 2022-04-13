@@ -22,7 +22,6 @@ const login = async (req, res) => {
     } catch (err) {
         return res.status(400).json({ message: 'Login error' });
     }
-
 }
 
 const getAll = async (req, res) => {
@@ -32,7 +31,6 @@ const getAll = async (req, res) => {
     } catch (err) {
         return res.status(400).json({ message: 'Database error' });
     }
-
 }
 
 const getById = async (req, res) => {
@@ -45,7 +43,6 @@ const getById = async (req, res) => {
     } catch (err) {
         return res.status(400).json({ message: 'Database error' });
     }
-
 }
 
 const deleteById = async (req, res) => {
@@ -59,7 +56,6 @@ const deleteById = async (req, res) => {
     } catch (err) {
         return res.status(400).json({ message: 'Database error' });
     }
-
 }
 
 const add = async (req, res) => {
@@ -78,14 +74,18 @@ const add = async (req, res) => {
     } catch (err) {
         return res.status(400).json({ message: `Database error - ${err}` });
     }
-
-
 }
 
 const update = async (req, res) => {
     try {
+        if (!req.body.name || !req.body.password)
+            return res.status(400).json({ message: 'Please add Name and Password values' });
         const hash = bcrypt.hashSync(`${req.body.password}`, 1);
         const userName = req.body.name;
+        const users = await service.getUsers();
+        const foundValue = users.find(user => user.name == userName);
+        if (foundValue != null)
+            return res.status(400).json({ message: 'This user already exists' });
         const result = await service.changeUser(req.params.id, { name: userName, password: hash })
         if (result)
             res.status(200).json({ message: `User ${req.params.id} updated` });
@@ -96,7 +96,6 @@ const update = async (req, res) => {
     }
 
 }
-
 
 module.exports = {
     login,

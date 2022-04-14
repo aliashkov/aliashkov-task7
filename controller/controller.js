@@ -1,18 +1,14 @@
 const service = require('../services/services');
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-const config = require("../config")
 
 const login = async (req, res) => {
     try {
-        const login = req.body.name;
-        const password = req.body.password;
+        const [login, password] = [req.body.name, req.body.password];
         const users = await service.getUsers();
-        const foundValue = users.find(user => user.name == login);
+        const foundValue = service.findUser(users, login);
         if (foundValue != null) {
-            const verifyPassword = bcrypt.compareSync(password, foundValue.password);
-            if ((login === foundValue.name) && (verifyPassword === true)) {
-                const token = jwt.sign({ login: login, password: foundValue.password }, config.secret);
+            const verifyPasswordAndLogin = service.verifyPasswordAndLogin(foundValue, login , password);
+            if (verifyPasswordAndLogin) {
+                const token = service.getToken(login , foundValue.password);
                 return res.send(token);
             }
             return res.status(400).json({ message: 'Incorrect login or password' });
@@ -48,7 +44,6 @@ const getById = async (req, res) => {
 const deleteById = async (req, res) => {
     try {
         const result = await service.deleteUser(req.params.id)
-        console.log(result)
         if (result)
             res.json({ message: `User with id - ${req.params.id} deleted` });
         else
@@ -60,13 +55,11 @@ const deleteById = async (req, res) => {
 
 const add = async (req, res) => {
     try {
-        console.log(req.body)
         if (!req.body.name || !req.body.password)
             return res.status(400).json({ message: 'Please add Name and Password values' });
-        const hash = bcrypt.hashSync(`${req.body.password}`, config.key);
-        const userName = req.body.name;
+        const { userName, hash } = service.getNameAndEncryptedPassword(req.body.name, req.body.password);
         const users = await service.getUsers();
-        const foundValue = users.find(user => user.name == userName);
+        const foundValue = service.findUser(users, userName);
         if (foundValue != null)
             return res.status(400).json({ message: 'This user already exists' });
         const result = await service.addUser({ name: userName, password: hash });
@@ -80,10 +73,9 @@ const update = async (req, res) => {
     try {
         if (!req.body.name || !req.body.password)
             return res.status(400).json({ message: 'Please add Name and Password values' });
-        const hash = bcrypt.hashSync(`${req.body.password}`, 1);
-        const userName = req.body.name;
+        const { userName, hash } = service.getNameAndEncryptedPassword(req.body.name, req.body.password);
         const users = await service.getUsers();
-        const foundValue = users.find(user => user.name == userName);
+        const foundValue = service.findUser(users, userName);
         if (foundValue != null)
             return res.status(400).json({ message: 'This user already exists' });
         const result = await service.changeUser(req.params.id, { name: userName, password: hash })

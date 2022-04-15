@@ -1,4 +1,5 @@
 const service = require('../services/services');
+const {validationResult} = require('express-validator')
 
 const login = async (req, res) => {
     try {
@@ -6,9 +7,9 @@ const login = async (req, res) => {
         const users = await service.getUsers();
         const foundValue = service.findUser(users, login);
         if (foundValue != null) {
-            const verifyPasswordAndLogin = service.verifyPasswordAndLogin(foundValue, login , password);
+            const verifyPasswordAndLogin = service.verifyPasswordAndLogin(foundValue, login, password);
             if (verifyPasswordAndLogin) {
-                const token = service.getToken(login , foundValue.password);
+                const token = service.getToken(login, foundValue.password);
                 return res.send(token);
             }
             return res.status(400).json({ message: 'Incorrect login or password' });
@@ -55,6 +56,9 @@ const deleteById = async (req, res) => {
 
 const add = async (req, res) => {
     try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty())
+            return res.status(400).json({ message: 'Registration error' });
         if (!req.body.name || !req.body.password)
             return res.status(400).json({ message: 'Please add Name and Password values' });
         const { userName, hash } = service.getNameAndEncryptedPassword(req.body.name, req.body.password);

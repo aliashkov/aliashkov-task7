@@ -1,8 +1,11 @@
 const service = require('../services/services');
-const {validationResult} = require('express-validator')
+const { validationResult } = require('express-validator')
 
 const login = async (req, res) => {
     try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty())
+            return res.status(400).json({ message: 'Validation error' });
         const [login, password] = [req.body.name, req.body.password];
         const users = await service.getUsers();
         const foundValue = service.findUser(users, login);
@@ -58,7 +61,7 @@ const add = async (req, res) => {
     try {
         const errors = validationResult(req);
         if (!errors.isEmpty())
-            return res.status(400).json({ message: 'Registration error' });
+            return res.status(400).json({ message: 'Validation error' });
         if (!req.body.name || !req.body.password)
             return res.status(400).json({ message: 'Please add Name and Password values' });
         const { userName, hash } = service.getNameAndEncryptedPassword(req.body.name, req.body.password);
@@ -66,7 +69,7 @@ const add = async (req, res) => {
         const foundValue = service.findUser(users, userName);
         if (foundValue != null)
             return res.status(400).json({ message: 'This user already exists' });
-        const result = await service.addUser({ name: userName, password: hash });
+        const result = await service.addUser({ name: userName, password: hash , photo : req.file.path});
         res.json(result);
     } catch (err) {
         return res.status(400).json({ message: `Database error - ${err}` });
@@ -75,6 +78,9 @@ const add = async (req, res) => {
 
 const update = async (req, res) => {
     try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty())
+            return res.status(400).json({ message: 'Validation error' });
         if (!req.body.name || !req.body.password)
             return res.status(400).json({ message: 'Please add Name and Password values' });
         const { userName, hash } = service.getNameAndEncryptedPassword(req.body.name, req.body.password);

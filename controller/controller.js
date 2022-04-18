@@ -67,7 +67,7 @@ const add = async (req, res) => {
         const foundValue = service.findUser(users, userName);
         if (foundValue != null)
             return res.status(400).json({ message: 'This user already exists' });
-        const result = await service.addUser({ name: userName, password: hash , photo : req.file.path});
+        const result = await service.addUser({ name: userName, password: hash, photo: req.file.path });
         res.json(result);
     } catch (err) {
         return res.status(400).json({ message: `Database error - ${err}` });
@@ -84,7 +84,7 @@ const update = async (req, res) => {
         const foundValue = service.findUser(users, userName);
         if (foundValue != null)
             return res.status(400).json({ message: 'This user already exists' });
-        const result = await service.changeUser(req.params.id, { name: userName, password: hash })
+        const result = await service.changeUser(req.params.id, { name: userName, password: hash, photo: req.file.path })
         if (result)
             res.status(200).json({ message: `User ${req.params.id} updated` });
         else

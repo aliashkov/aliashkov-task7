@@ -6,7 +6,7 @@ const jwt = require('jsonwebtoken');
 class UserService {
 
     getUsers() {
-        return User.findAll({ attributes: ['id', 'name', 'password'] })
+        return User.findAll({ attributes: ['id', 'name', 'password' , 'photo'] })
     }
 
     getUserById(id) {
@@ -17,8 +17,8 @@ class UserService {
         return User.create(newUser)
     }
 
-    changeUser(id, { name, password }) {
-        return User.update({ name, password }, { where: { id } })
+    changeUser(id, { name, password , photo }) {
+        return User.update({ name, password , photo }, { where: { id } })
     }
 
     deleteUser(id) {

@@ -5,7 +5,7 @@ const login = async (req, res) => {
     try {
         const errors = validationResult(req);
         if (!errors.isEmpty())
-            return res.status(400).json({ message: 'Validation error' });
+            return res.status(400).json({ message: errors });
         const [login, password] = [req.body.name, req.body.password];
         const users = await service.getUsers();
         const foundValue = service.findUser(users, login);
@@ -61,9 +61,7 @@ const add = async (req, res) => {
     try {
         const errors = validationResult(req);
         if (!errors.isEmpty())
-            return res.status(400).json({ message: 'Validation error' });
-        if (!req.body.name || !req.body.password)
-            return res.status(400).json({ message: 'Please add Name and Password values' });
+            return res.status(400).json({ message: errors });
         const { userName, hash } = service.getNameAndEncryptedPassword(req.body.name, req.body.password);
         const users = await service.getUsers();
         const foundValue = service.findUser(users, userName);
@@ -80,9 +78,7 @@ const update = async (req, res) => {
     try {
         const errors = validationResult(req);
         if (!errors.isEmpty())
-            return res.status(400).json({ message: 'Validation error' });
-        if (!req.body.name || !req.body.password)
-            return res.status(400).json({ message: 'Please add Name and Password values' });
+            return res.status(400).json({ message: errors });
         const { userName, hash } = service.getNameAndEncryptedPassword(req.body.name, req.body.password);
         const users = await service.getUsers();
         const foundValue = service.findUser(users, userName);

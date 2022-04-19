@@ -6,23 +6,23 @@ const jwt = require('jsonwebtoken');
 class UserService {
 
     getUsers() {
-        return User.findAll({ attributes: ['id', 'name', 'password' , 'photo'] })
+        return User.find()
     }
 
     getUserById(id) {
-        return User.findOne({ where: { id } })
+        return User.findById(id);
     }
 
     addUser(newUser) {
-        return User.create(newUser)
+        return new User(newUser).save();
     }
 
-    changeUser(id, { name, password , photo }) {
-        return User.update({ name, password , photo }, { where: { id } })
+    changeUser(id, { name, password, photo }) {
+        return User.findOneAndUpdate({ _id: id }, { $set: { "name": name , "password": password , "photo": photo } }, { returnOriginal: false })
     }
 
     deleteUser(id) {
-        return User.destroy({ where: { id } })
+        return User.deleteOne({ _id: id })
     }
 
     findUser(users, userName) {
@@ -48,3 +48,4 @@ class UserService {
 }
 
 module.exports = new UserService();
+

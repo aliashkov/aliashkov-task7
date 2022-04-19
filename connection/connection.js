@@ -1,8 +1,5 @@
-const Sequelize = require("sequelize");
+const mongoose = require('mongoose');
 
-const sequelize = new Sequelize("db", "root", "root", {
-    dialect: "mysql",
-    host: "localhost"
-});
+const connect = mongoose.connect('mongodb://localhost:27017/users',{useNewUrlParser: true});
 
-module.exports = sequelize;
+module.exports = connect;

@@ -1,6 +1,6 @@
 const express = require("express");
-const userController = require("../controller/controller");
-const loginValidator = require('../middleware/check')
+const userController = require("../controller/user.controller");
+const loginValidator = require('../middleware/validator')
 const auth = require('../middleware/auth');
 const multer = require('../middleware/multer')
 

@@ -1,6 +1,7 @@
 const express = require("express");
-const userController = require("../controller/controller");
-const loginValidator = require('../middleware/check');
+const userController = require("../controller/user.controller");
+const authController = require("../controller/authlogin.controller");
+const loginValidator = require('../middleware/validator');
 const multer = require('../middleware/multer')
 
 const unauthRouter = express.Router();
@@ -9,7 +10,7 @@ const unauthRouter = express.Router();
 unauthRouter
     .get('/', userController.getAll)
     .get('/:id', userController.getById)
-    .post('/login', userController.login)
-    .post('/',  multer, loginValidator(),  userController.add)
+    .post('/login', authController.login)
+    .post('/',  multer, loginValidator(),  authController.add)
 
 module.exports = unauthRouter;
